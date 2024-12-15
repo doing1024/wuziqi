@@ -12,6 +12,9 @@ var wins = [];
 var myWin = [];
 var computerWin = [];
 
+// 简易模拟退火
+var temperature = 0.8; // 温度
+
 for (var i = 0; i < 15; i++) {
   chessBoard[i] = [];
   for (var j = 0; j < 15; j++) {
@@ -174,7 +177,8 @@ var computerAI = function () {
   var myScore = [];
   var computerScore = [];
   var max = 0;
-  var u = 0, v = 0;
+  var u = 0,
+    v = 0;
 
   // 初始化分数数组
   for (var i = 0; i < 15; i++) {
@@ -194,10 +198,7 @@ var computerAI = function () {
     for (var j = 0; j < 15; j++) {
       if (chessBoard[i][j] === 0) {
         // 区域权重计算
-        var distanceToCenter = Math.max(
-          Math.abs(i - 7),
-          Math.abs(j - 7)
-        );
+        var distanceToCenter = Math.max(Math.abs(i - 7), Math.abs(j - 7));
         var areaBonus = distanceToCenter <= centerRange ? centerWeight : 1;
 
         for (var k = 0; k < count; k++) {
@@ -249,6 +250,8 @@ var computerAI = function () {
           }
         }
       }
+      chessBoard[i][j] *= Math.random() * (1 - temperature) + temperature;
+	if (temperature < 1)temperature += 0.01;
     }
   }
 
@@ -258,12 +261,13 @@ var computerAI = function () {
     for (var i = 0; i < 15; i++) {
       for (var j = 0; j < 15; j++) {
         if (chessBoard[i][j] === 0) {
-          emptyCells.push({x: i, y: j});
+          emptyCells.push({ x: i, y: j });
         }
       }
     }
     if (emptyCells.length > 0) {
-      var randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+      var randomCell =
+        emptyCells[Math.floor(Math.random() * emptyCells.length)];
       u = randomCell.x;
       v = randomCell.y;
     }
@@ -271,7 +275,7 @@ var computerAI = function () {
 
   oneStep(u, v, false);
   chessBoard[u][v] = 2;
-  
+
   // 胜利判断逻辑保持不变
   for (var k = 0; k < count; k++) {
     if (wins[u][v][k]) {
@@ -283,7 +287,7 @@ var computerAI = function () {
       }
     }
   }
-  
+
   if (!over) {
     me = !me;
   }
