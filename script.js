@@ -224,6 +224,10 @@ var computerAI = function () {
             } else if (computerWin[k] === 4) {
               computerScore[i][j] += 20000 * areaBonus;
             }
+            computerScore[i][j] *=
+              Math.random() * (1 - temperature) + temperature;
+            myScore[i][j] *= Math.random() * (1 - temperature) + temperature;
+            if (temperature < 1) temperature += 0.01;
           }
         }
 
@@ -250,8 +254,6 @@ var computerAI = function () {
           }
         }
       }
-      chessBoard[i][j] *= Math.random() * (1 - temperature) + temperature;
-	if (temperature < 1)temperature += 0.01;
     }
   }
 
