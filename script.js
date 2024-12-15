@@ -174,8 +174,9 @@ var computerAI = function () {
   var myScore = [];
   var computerScore = [];
   var max = 0;
-  var u = 0,
-    v = 0;
+  var u = 0, v = 0;
+
+  // 初始化分数数组
   for (var i = 0; i < 15; i++) {
     myScore[i] = [];
     computerScore[i] = [];
@@ -184,33 +185,48 @@ var computerAI = function () {
       computerScore[i][j] = 0;
     }
   }
+
+  // 新增：区域权重，优先考虑棋盘中心区域
+  const centerWeight = 1.5;
+  const centerRange = 5; // 棋盘中心的范围
+
   for (var i = 0; i < 15; i++) {
     for (var j = 0; j < 15; j++) {
       if (chessBoard[i][j] === 0) {
+        // 区域权重计算
+        var distanceToCenter = Math.max(
+          Math.abs(i - 7),
+          Math.abs(j - 7)
+        );
+        var areaBonus = distanceToCenter <= centerRange ? centerWeight : 1;
+
         for (var k = 0; k < count; k++) {
           if (wins[i][j][k]) {
+            // 玩家威胁评分
             if (myWin[k] === 1) {
-              myScore[i][j] += 200;
+              myScore[i][j] += 200 * areaBonus;
             } else if (myWin[k] === 2) {
-              myScore[i][j] += 400;
+              myScore[i][j] += 400 * areaBonus;
             } else if (myWin[k] === 3) {
-              myScore[i][j] += 2000;
+              myScore[i][j] += 2000 * areaBonus;
             } else if (myWin[k] === 4) {
-              myScore[i][j] += 10000;
+              myScore[i][j] += 10000 * areaBonus;
             }
-          }
-          if (wins[i][j][k]) {
+
+            // 计算机防御和进攻评分
             if (computerWin[k] === 1) {
-              computerScore[i][j] += 220;
+              computerScore[i][j] += 220 * areaBonus;
             } else if (computerWin[k] === 2) {
-              computerScore[i][j] += 420;
+              computerScore[i][j] += 420 * areaBonus;
             } else if (computerWin[k] === 3) {
-              computerScore[i][j] += 2100;
+              computerScore[i][j] += 2100 * areaBonus;
             } else if (computerWin[k] === 4) {
-              computerScore[i][j] += 20000;
+              computerScore[i][j] += 20000 * areaBonus;
             }
           }
         }
+
+        // 动态权衡策略：优先防守，同时保持进攻机会
         if (myScore[i][j] > max) {
           max = myScore[i][j];
           u = i;
@@ -235,8 +251,28 @@ var computerAI = function () {
       }
     }
   }
+
+  // 新增：如果没有高分位置，随机选择附近未下子区域
+  if (max === 0) {
+    var emptyCells = [];
+    for (var i = 0; i < 15; i++) {
+      for (var j = 0; j < 15; j++) {
+        if (chessBoard[i][j] === 0) {
+          emptyCells.push({x: i, y: j});
+        }
+      }
+    }
+    if (emptyCells.length > 0) {
+      var randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+      u = randomCell.x;
+      v = randomCell.y;
+    }
+  }
+
   oneStep(u, v, false);
   chessBoard[u][v] = 2;
+  
+  // 胜利判断逻辑保持不变
   for (var k = 0; k < count; k++) {
     if (wins[u][v][k]) {
       computerWin[k]++;
@@ -247,6 +283,7 @@ var computerAI = function () {
       }
     }
   }
+  
   if (!over) {
     me = !me;
   }
