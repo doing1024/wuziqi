@@ -13,7 +13,7 @@ var myWin = [];
 var computerWin = [];
 
 // 简易模拟退火
-var temperature = 2; // 温度
+var temperature = 1; // 温度
 
 for (var i = 0; i < 15; i++) {
   chessBoard[i] = [];
