@@ -294,3 +294,4 @@ var computerAI = function () {
     me = !me;
   }
 };
+drawChessBoard();
