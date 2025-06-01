@@ -92,7 +92,7 @@ for (var i = 0; i < count; i++) {
 context.strokeStyle = "#000";
 
 var logo = new Image();
-logo.src = "https://s1.ax1x.com/2020/10/25/BeoauD.jpg";
+// logo.src = "https://s1.ax1x.com/2020/10/25/BeoauD.jpg";
 logo.onload = function () {
   context.drawImage(logo, 0, 0, 450 * scale, 450 * scale);
   drawChessBoard();
